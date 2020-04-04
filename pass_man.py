@@ -182,9 +182,28 @@ def gen_pass():
 
 
 def view_pass():
-    print(str(path.exists("data.iso")))
     vp = Tk()
-    vp.destroy()
+    vp.geometry("400x400")
+    vp.title("View Passwords")
+
+    f = Fernet(key)
+    file = open("data.iso", "r")
+    data = file.readlines()
+    col, row = 0, 0
+    for i in range(len(data)):
+        data[i] = data[i].strip()
+    for each in data:
+        service_hash = each[:-101]
+        pass_hash = each[-100:]
+        raw_service = f.decrypt(service_hash.encode()).decode()
+        raw_pass = f.decrypt(pass_hash.encode()).decode()
+        tcol = col + 1
+        Label(vp, text=raw_service+" : ", font=12).grid(column=col, row=row)
+        Label(vp, text=raw_pass, font=12).grid(column=tcol, row=row)
+        row += 1
+
+    file.close()
+
     vp.mainloop()
 
 
